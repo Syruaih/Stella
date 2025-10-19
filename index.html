@@ -536,7 +536,6 @@ function renderSatelliteList(centerName,satelliteNames){ if(!satListEl)return; i
 
 function clearOrbit(){ Array.prototype.forEach.call(document.querySelectorAll('.orbit-item'),function(n){n.remove()}); document.getElementById('lineLayer').innerHTML=""; Popover.close(); }
 
-var SAT_SIZE=120, RADIUS=300; var SAT_JITTER_RAD=22*Math.PI/180; var RAD_JITTER=42; var DELAY_JITTER=160;
 function createOrbitItems(centerName,satelliteNames){ var orbit=document.getElementById('orbitContainer'); var lineLayer=document.getElementById('lineLayer'); clearOrbit(); var ow=orbit.clientWidth, oh=orbit.clientHeight; if(!ow||!oh) return waitForNonZeroSize(orbit,function(){createOrbitItems(centerName,satelliteNames)}); var cx=ow/2, cy=oh/2;
   satelliteNames.forEach(function(satName,index){ var src=getSrc(satName); var tag=getTag(centerName,satName); var color=colorForTag(tag);
     var img=document.createElement('img'); img.src=src; img.alt=satName; img.setAttribute('data-name',satName); img.className='orbit-item'; img.style.width=SAT_SIZE+'px'; img.style.height=SAT_SIZE+'px'; img.style.border='3px solid '+color; img.style.boxShadow='0 0 48px '+color+', 0 0 24px '+color; orbit.appendChild(img);
@@ -556,7 +555,7 @@ function extendConnector(line){ line.style.opacity=1; line.style.width=line.getA
 function backToMain(){ clearOrbit(); var orbit=document.getElementById('orbitContainer'); orbit.classList.remove('is-visible'); orbit.classList.remove('active'); orbit.style.visibility='hidden'; var main=document.getElementById('mainGallery'); main.classList.remove('is-fading'); swapText(noteTitle,"Aucune image sélectionnée"); swapText(noteSubtitle,"Sélectionne une image au centre"); noteTextarea.value=""; setTopTitleSafe("Aucune image sélectionnée"); setTopTipSafe("Clique un centre pour voir ses satellites..."); centerSwatch.style.background="var(--accent)"; centerSwatch.style.color="var(--accent)"; satListEl.innerHTML='<div style="opacity:.7">— Aucun —</div>'; if(centerWrap&&centerWrap.dataset) centerWrap.dataset.name=""; loadLeftNoteForCurrent(); navHistory=[]; updateStageButtonsVisibility(); }
 
 /* ===== Libellés Popover ===== */
-const POP_COPY={ title:(center,sat)=>{var tag=getTag(center,sat); var name=escapeHtml(sat||""); if(tag){var safeTag=escapeHtml(tag); var color=colorForTag(tag); return `${name} <span style="color:${color}; font-weight:600">(${safeTag})</span>`;} return name;}, emptyNote:"(Aucune note pour ce lien)", placeholder:"Écris ta note…", setCenter:"Mettre au centre", edit:"Editer", save:"Sauver" };
+const POP_COPY={ title:(center,sat)=>{var tag=getTag(center,sat); var name=escapeHtml(sat||""); if(tag){var safeTag=escapeHtml(tag); var color=colorForTag(tag); return `${name} <span style="color:${color}; font-weight:600">(${safeTag})</span>`;} return name;}, emptyNote:"(Aucune note pour ce lien)", placeholder:"Écris ta note…", setCenter:"Mettre au centre", edit:"Éditer", save:"Enregistrer" };
 var POP_OFFSET_RADIAL=10, POP_OFFSET_SIDE=160;
 var Popover=(function(){var current=null; var cleanup=function(){}; var lastPlace=function(){}; function open(opts){ close(); var orbitEl=opts.orbitEl, anchorEl=opts.anchorEl, center=opts.center; var color=opts.color, title=opts.title||'', getValue=opts.getValue, onSave=opts.onSave, onSetCenter=opts.onSetCenter; var pop=document.createElement('div'); pop.className='popover'; pop.setAttribute('role','dialog'); var titleHTML=opts.title||POP_COPY.title('Centre','Satellite'); var a11yText=(function(){var tmp=document.createElement('div'); tmp.innerHTML=titleHTML; return tmp.textContent||tmp.innerText||'';})(); pop.setAttribute('aria-label',a11yText); pop.setAttribute('data-state','hidden'); pop.style.borderColor=color; var initialVal=(getValue&&getValue())||''; var shownText= initialVal?escapeHtml(initialVal):escapeHtml(POP_COPY.emptyNote); pop.innerHTML='<div class="popTitle">'+titleHTML+'</div>'+'<div class="popText" data-el="text">'+shownText+'</div>'+'<textarea class="popEdit" data-el="edit" placeholder="'+escapeHtml(POP_COPY.placeholder)+'"></textarea>'+'<div class="popActions">'+'<button class="popBtn" data-el="setCenterBtn">'+escapeHtml(POP_COPY.setCenter)+'</button>'+'<button class="popBtn" data-el="editBtn">'+escapeHtml(POP_COPY.edit)+'</button>'+'<button class="popBtn" data-el="saveBtn">'+escapeHtml(POP_COPY.save)+'</button>'+'</div>';
     orbitEl.appendChild(pop); pop.addEventListener('click',function(e){e.stopPropagation();}); var text=pop.querySelector('[data-el="text"]'); var edit=pop.querySelector('[data-el="edit"]'); var editBtn=pop.querySelector('[data-el="editBtn"]'); var saveBtn=pop.querySelector('[data-el="saveBtn"]'); var setCenterBtn=pop.querySelector('[data-el="setCenterBtn"]');
@@ -601,6 +600,38 @@ buildTagChips(); if(codexSearch){codexSearch.addEventListener('input', renderCod
 
 /* ===== Initialisation ===== */
 window.addEventListener('load', function(){ const initial=(location.hash||'').slice(1)==='codex'?'codex':'orbit'; setView(initial); });
+/* ===== UX: fermer la modale via clic arrière-plan + Échap ===== */
+document.getElementById('codexModal').addEventListener('click', (e)=>{
+  if (e.target && e.target.id === 'codexModal') closeCodexModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if (e.key === 'Escape') {
+    var modal = document.getElementById('codexModal');
+    if (modal && modal.getAttribute('aria-hidden') === 'false') closeCodexModal();
+  }
+});
+/* Blur la recherche quand on passe à Codex */
+if (typeof tabs!=='undefined' && tabs && tabs.codex) {
+  tabs.codex.addEventListener('click', ()=>{
+    if (typeof searchInput !== 'undefined' && searchInput) searchInput.blur();
+  });
+}
+/* ===== UX: fermer la modale via clic arrière-plan + Échap ===== */
+document.getElementById('codexModal').addEventListener('click', (e)=>{
+  if (e.target && e.target.id === 'codexModal') closeCodexModal();
+});
+document.addEventListener('keydown', (e)=>{
+  if (e.key === 'Escape') {
+    var modal = document.getElementById('codexModal');
+    if (modal && modal.getAttribute('aria-hidden') === 'false') closeCodexModal();
+  }
+});
+/* Blur la recherche quand on passe à Codex */
+if (typeof tabs!=='undefined' && tabs && tabs.codex) {
+  tabs.codex.addEventListener('click', ()=>{
+    if (typeof searchInput !== 'undefined' && searchInput) searchInput.blur();
+  });
+}
 </script>
 </body>
 </html>
