@@ -616,22 +616,6 @@ if (typeof tabs!=='undefined' && tabs && tabs.codex) {
     if (typeof searchInput !== 'undefined' && searchInput) searchInput.blur();
   });
 }
-/* ===== UX: fermer la modale via clic arrière-plan + Échap ===== */
-document.getElementById('codexModal').addEventListener('click', (e)=>{
-  if (e.target && e.target.id === 'codexModal') closeCodexModal();
-});
-document.addEventListener('keydown', (e)=>{
-  if (e.key === 'Escape') {
-    var modal = document.getElementById('codexModal');
-    if (modal && modal.getAttribute('aria-hidden') === 'false') closeCodexModal();
-  }
-});
-/* Blur la recherche quand on passe à Codex */
-if (typeof tabs!=='undefined' && tabs && tabs.codex) {
-  tabs.codex.addEventListener('click', ()=>{
-    if (typeof searchInput !== 'undefined' && searchInput) searchInput.blur();
-  });
-}
 </script>
 </body>
 </html>
