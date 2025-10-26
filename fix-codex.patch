@@ -1,0 +1,11 @@
+diff --git a/index.html b/index.html
+index 0000000..0000001 100644
+--- a/index.html
++++ b/index.html
+@@ -1,9999 +1,9999 @@
+@@
+-    var baseAngle=(index/Math.max(1,satelliteNames.length))*2*Math.PI; var angle=baseAngle + (Math.random()*2-1)*SAT_JITTER_RAD; var radius=RADIUS + (Math.random()*2-1)*RAD_JITTER;
++    var baseAngle=(index/Math.max(1,satelliteNames.length))*2*Math.PI; var angle=baseAngle + rand(-SAT_JITTER_RAD, SAT_JITTER_RAD); var radius=RADIUS + rand(-RAD_JITTER, RAD_JITTER);
+@@
+-    var baseDelay=80 + index*120 + Math.floor(Math.random()*DELAY_JITTER);
++    var baseDelay=80 + index*120 + Math.floor(rand(0, DELAY_JITTER));

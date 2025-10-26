@@ -32,10 +32,7 @@
     --titleBlockH: calc(var(--title-line) + var(--title-gap) + var(--tip-lines)*var(--tip-line));
 
     --center-fade: .36s;
-    }
-  /* N'affiche la colonne de droite que dans l'onglet ORBITE */
-  body[data-view="codex"] .rightPane,
-  body[data-view="extra"] .rightPane { display:none !important; }
+  }
 
   html, body { height:100%; }
   body{
@@ -74,19 +71,16 @@
     background:var(--pane);
     border-bottom:1px solid var(--border);
     padding:14px;
-    display:grid; grid-template-columns: auto 1fr auto; align-items:center; column-gap:12px; row-gap:6px;
+    display:flex; flex-direction:column; gap:12px;
     flex:0 0 auto; position:relative;
   }
-  /* Réduction de la barre en vues non-Orbite */
-  body[data-view="codex"] .topBar,
-  body[data-view="extra"] .topBar { padding:8px; gap:6px; }
   /* Centre les onglets visuellement avec le titre (même décalage à droite) */
-  .viewTabs{ display:flex; gap:10px; justify-content:flex-start; align-self:flex-start; padding-right:0; }
+  .viewTabs{ display:flex; gap:8px; justify-content:center; padding-right:56px; }
   .viewTab{
     background:var(--pane);
     color:var(--text);
     border:1px solid var(--border);
-    padding:10px 16px; border-radius:12px; cursor:pointer; font-size:1.05rem;
+    padding:8px 12px; border-radius:10px; cursor:pointer;
   }
   .viewTab[aria-selected="true"], .viewTab:hover{ box-shadow:0 0 12px var(--glow); background:var(--pane-3); }
 
@@ -97,110 +91,23 @@
     color:var(--text-dim); text-align:center; font-size:.92em;
   }
   .headRow.headRow--center{
-    display: contents;
+    display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:12px; padding-right:56px;
   }
-  /* Masque le titre/sous-titre hors de l’onglet Orbite */
-  body[data-view="codex"] .headRow .titleGroup,
-  body[data-view="extra"] .headRow .titleGroup { display:none !important; }
-  /* Optionnel: retire l’espacement fantôme */
-  body[data-view="codex"] .headRow .ghost,
-  body[data-view="extra"] .headRow .ghost { display:none !important; }
   .headRow--center .titleGroup{
-    justify-self:stretch; display:flex; flex-direction:column; align-items:center; gap: var(--title-gap);
-    height: var(--titleBlockH); overflow:hidden; text-align:center; min-width:0; width:100%;
+    justify-self:center; display:flex; flex-direction:column; align-items:center; gap: var(--title-gap);
+    height: var(--titleBlockH); overflow:hidden;
   }
   .headRow--center .searchWrap{ justify-self:end; }
-  .headRow--center .ghost{ display:none; }
+  .headRow--center .ghost{ height:1px; opacity:0; }
 
-  .topTitleText{ color:var(--text); font-size: clamp(1.2rem, 1.2rem + 0.6vw, 2rem); font-weight:700; letter-spacing:.2px; line-height:1.1; text-shadow:none; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .titleGroup > *{ max-width:100%; }
+  .topTitleText{ color:var(--text); font-size: clamp(1.2rem, 1.2rem + 0.6vw, 2rem); font-weight:700; letter-spacing:.2px; line-height:1.1; text-shadow:none; }
 
   .topActions{ position:absolute; right:12px; top:12px; display:flex; gap:8px; }
   .iconBtn{
     background:var(--pane); color:var(--text); border:1px solid var(--border); border-radius:10px;
     padding:8px 10px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.25);
   }
-  /* Place le titre sur la même ligne, à droite des boutons */
-  .headRow .titleGroup{ grid-column: 2; justify-self:center; align-items:center; text-align:center; min-width:0; }
-  .headRow .searchWrap{ grid-column: 3; justify-self:end; }
-  .topTitleText{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .titleGroup > *{ max-width:100%; }
-  /* Affinage barre du haut: éviter les vides en non-Orbite */
-  body[data-view="codex"] .headRow.headRow--center,
-  body[data-view="extra"] .headRow.headRow--center { display:none; }
-  body[data-view="codex"] .topBar .tip,
-  body[data-view="extra"] .topBar .tip { display:none; }
-  /* Transitions douces pour le bloc titre (quand présent) sans bouger les boutons */
-  .headRow--center .titleGroup{ max-height: var(--titleBlockH); overflow:hidden; transition:max-height .28s cubic-bezier(.2,.6,.2,1), opacity .22s ease, transform .22s ease; will-change:max-height, opacity, transform; }
-  body[data-view="codex"] .headRow .titleGroup,
-  body[data-view="extra"] .headRow .titleGroup{ max-height:0; opacity:0; transform:translateY(-6px); pointer-events:none; }
-  /* Smooth top bar (ne pas bouger les boutons) */
-  body .headRow .titleGroup{ display:flex !important; }
-  .headRow--center .titleGroup{ height:auto; max-height: var(--titleBlockH); overflow:hidden; transition: max-height .32s cubic-bezier(.2,.6,.2,1), opacity .24s ease, transform .24s ease; will-change: max-height, opacity, transform; }
-  body[data-view="codex"] .headRow .titleGroup,
-  body[data-view="extra"] .headRow .titleGroup{ max-height:0; opacity:0; transform:translateY(-6px); pointer-events:none; }
-  body[data-view="codex"] .topBar,
-  body[data-view="extra"] .topBar { padding:14px !important; gap:12px !important; }
   .iconBtn:hover{ background:var(--pane-3); box-shadow:0 0 12px var(--glow); }
-  
-  /* ===== VIEWS TRANSITION (focused, 0.7s, translate+blur) ===== */
-  .orbit-stage, .codex, .extra {
-    transition: opacity .7s cubic-bezier(.22,.61,.36,1),
-                transform .7s cubic-bezier(.22,.61,.36,1),
-                filter .7s cubic-bezier(.22,.61,.36,1);
-    will-change: opacity, transform, filter;
-  }
-  .orbit-stage.is-entering, .codex.is-entering, .extra.is-entering {
-    opacity: 0; transform: translateY(18px) scale(.98); filter: blur(3px);
-  }
-  .orbit-stage.is-leaving, .codex.is-leaving, .extra.is-leaving {
-    opacity: 0; transform: translateY(18px) scale(.98); filter: blur(3px);
-  }
-  /* Items inside views also animate */
-  .gallery .card,
-  .codexCard,
-  .toolCard,
-  .grid > *,
-  .actions > * {
-    transition: opacity .7s cubic-bezier(.22,.61,.36,1), transform .7s cubic-bezier(.22,.61,.36,1);
-    will-change: opacity, transform;
-  }
-  
-  /* Overlay de transition globale (2s out-in) */
-  /* (supprimé) overlay global; on anime désormais seulement les vues/éléments */
-  
-  /* Transitions plus sensibles et progressives (sortie/entrée) */
-  .gallery .card,
-  .codexCard,
-  .toolCard,
-  .grid > *,
-  .actions > * {
-    transition: opacity 2s cubic-bezier(.22,.61,.36,1), transform 2s cubic-bezier(.22,.61,.36,1);
-    will-change: opacity, transform;
-  }
-  /* État de départ/fin appliqué via classes sur la vue */
-  .is-leaving .gallery .card,
-  .is-leaving .codexCard,
-  .is-leaving .toolCard,
-  .is-leaving .grid > *,
-  .is-leaving .actions > * {
-    opacity: 0; transform: translateY(6px) scale(.985);
-  }
-  .is-entering .gallery .card,
-  .is-entering .codexCard,
-  .is-entering .toolCard,
-  .is-entering .grid > *,
-  .is-entering .actions > * {
-    opacity: 0; transform: translateY(6px) scale(.985);
-  }
-  /* Applique aussi l’état sur les conteneurs de vues */
-  .codex.is-entering, .extra.is-entering, .orbit-stage.is-entering { opacity: 0; transform: translateY(6px) scale(.985); }
-  /* Transitions vues (out-in) pour un ressenti plus doux */
-  .orbit-stage, .codex, .extra {
-    will-change: opacity, transform;
-    transition: opacity .36s cubic-bezier(.2,.6,.2,1), transform .36s cubic-bezier(.2,.6,.2,1);
-  }
-  .is-leaving { opacity: 0 !important; transform: translateY(6px) scale(.985) !important; pointer-events: none; }
 
   .searchWrap{display:flex;align-items:center;gap:8px}
   .searchWrap input{
@@ -214,18 +121,12 @@
 
   /* ===== LAYOUT ===== */
   .shell{flex:1; display:flex; min-height:0; height:100%;}
-  /* Transition globale pour les changements d’onglet (même sensation que la sélection d’une image) */
-  .shell{ transition: opacity .28s ease, transform .28s ease; }
-  .shell.is-switching{ opacity:0; transform: translateY(6px) scale(.985); pointer-events:none; }
   .leftPane{position:relative; flex:1; min-width:0; display:flex; align-items:center; justify-content:center; padding:8px;}
   .rightPane{
     width:360px; max-width:42vw; min-width:280px; flex:0 0 auto; height:100%; align-self:stretch;
     background:var(--pane); border-left:1px solid var(--border);
     display:flex; flex-direction:column; padding:14px; gap:12px; overflow:auto;
   }
-  /* Afficher la colonne de droite uniquement en vue Orbite */
-  body[data-view="codex"] .rightPane,
-  body[data-view="extra"] .rightPane { display:none !important; }
   @media (max-width: 900px){
     .shell{flex-direction:column; height:auto;}
     .rightPane{width:100% !important; max-width:none !important; border-left:none; border-top:1px solid var(--border); height:auto; align-self:auto;}
@@ -234,8 +135,6 @@
 
   /* ===== OVERLAY NOTES ===== */
   .leftOverlay{ position:absolute; top:10px; left:10px; z-index:6; display:flex; flex-direction:column; gap:6px; max-width:min(44vw,520px); pointer-events:none; }
-  /* Masque la zone de note (globales) à gauche */
-  .leftOverlay{ display:none !important; }
   .overlayCard{ pointer-events:auto; background:transparent; border:none; box-shadow:none; padding:0; margin:0; }
   #leftNote{ width:100%; min-height:120px; resize:vertical; border-radius:0; padding:0; line-height:1.5; border:none; outline:none; background:transparent; color:var(--text); caret-color:var(--accent-3); text-shadow:0 0 8px var(--glow), 0 0 14px rgba(0,0,0,.25); }
   #leftNote::placeholder{ color:var(--text-dim); text-shadow:0 0 8px rgba(0,0,0,.25); }
@@ -252,7 +151,7 @@
   .card img:hover{transform:scale(1.08);box-shadow:0 0 30px var(--accent-2),0 0 60px var(--accent);} 
   .label{font-size:.95em;opacity:.9}
 
-  .orbit-stage{position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center; transition: opacity 2s cubic-bezier(.22,.61,.36,1), transform 2s cubic-bezier(.22,.61,.36,1);} 
+  .orbit-stage{position:relative; width:100%; height:100%; display:flex; align-items:center; justify-content:center;}
   .orbit-container{ position:absolute; inset:0; width:100%; height:100%; max-width:none !important; max-height:none; overflow:visible; display:none; opacity:0; transform:translateY(6px) scale(.985); transition:opacity .28s ease, transform .28s ease; }
   .orbit-container.active{display:block;}
   .orbit-container.is-visible{opacity:1; transform:translateY(0) scale(1);} 
@@ -322,8 +221,8 @@
   .stageBtn:hover{ background:var(--pane-3); box-shadow:0 0 12px var(--glow); }
 
   /* ===== CODEX (nouvelle partie) ===== */
-  .codex{ display:none; width:100%; height:100%; opacity:0; transition: opacity 2s cubic-bezier(.22,.61,.36,1), transform 2s cubic-bezier(.22,.61,.36,1); }
-  .codex.active{ display:flex; gap:16px; padding:12px; opacity:1; }
+  .codex{ display:none; width:100%; height:100%; }
+  .codex.active{ display:flex; gap:16px; padding:12px; }
   .codex .filters{ width:280px; max-width:32vw; flex:0 0 auto; background:var(--pane); border:1px solid var(--border); border-radius:12px; padding:12px; box-shadow:0 6px 18px rgba(0,0,0,.25); }
   .codex .filters h3{ margin:0 0 8px; color:var(--accent-3); font-size:1rem; }
   .codex .filterRow{ display:flex; gap:8px; flex-wrap:wrap; }
@@ -369,12 +268,8 @@
   /* Bouton flottant pour l'atelier */
   .fab-extra{ position:fixed; bottom:14px; right:14px; z-index:210; background:var(--pane); color:var(--text); border:1px solid var(--border); border-radius:999px; padding:10px 14px; cursor:pointer; box-shadow:0 6px 18px rgba(0,0,0,.35); }
   /* Onglet Atelier (vue) */
-  .extra{ display:none; width:100%; height:100%; padding:12px; opacity:0; transition: opacity 2s cubic-bezier(.22,.61,.36,1), transform 2s cubic-bezier(.22,.61,.36,1); }
-  .extra.active{ display:flex; gap:16px; opacity:1; }
-  .toolCard{ max-width:min(900px,92vw); margin: 10px auto; background: var(--pane); border:1px solid var(--border); border-radius:14px; box-shadow:0 12px 30px rgba(0,0,0,.35); padding:14px; }
-  .toolCard h3{ margin:6px 0 10px; }
-  .toolCard textarea{ width:100%; min-height:140px; background: linear-gradient(180deg,var(--pane-2),var(--pane)); color: var(--text); border:1px solid var(--border); border-radius:10px; padding:10px; outline:none; box-shadow: inset 0 0 0 1px rgba(0,0,0,.25); }
-  .toolCard .btnRow{ display:flex; gap:8px; flex-wrap:wrap; margin:10px 0; }
+  .extra{ display:none; width:100%; height:100%; padding:12px; }
+  .extra.active{ display:block; }
   
   /* ===== Vue pleine page (Atelier) ===== */
   body.extra-open > :not(#extraPage) { display:none !important; }
@@ -467,22 +362,6 @@
       if(lo) lo.addEventListener('click', function(){ sync((input.value||'').toLowerCase()); });
       if(rev) rev.addEventListener('click', function(){ sync((input.value||'').split('').reverse().join('')); });
       if(clr) clr.addEventListener('click', function(){ if(input) input.value=''; if(out) out.value=''; if(input) input.focus(); });
-    })();
-  </script>
-  <script>
-    // Surchage plus douce: out-in sur la zone centrale et fade des vues
-    (function(){
-      var prev = (typeof window.setViewWithFade === 'function') ? window.setViewWithFade : function(n){ try{ setView(n); }catch(e){} };
-      window.setViewWithFade = function(name){
-        var prevName = document.body && document.body.getAttribute('data-view') || 'orbit';
-        var prevEl = (window.views && window.views[prevName]) || null;
-        if(prevEl){
-          prevEl.classList.add('is-leaving');
-          setTimeout(function(){ try{ setView(name); }catch(e){}; if(prevEl) prevEl.classList.remove('is-leaving'); }, 180);
-        } else {
-          prev(name);
-        }
-      };
     })();
   </script>
   <script>
@@ -742,7 +621,6 @@ function setTopTip(text){var el=document.getElementById("topTip");swapText(el,te
   }
 })();
 
-var SUPPRESS_HASH = false;
 const views={
   orbit:document.getElementById('view-orbit'),
   codex:document.getElementById('view-codex'),
@@ -753,10 +631,7 @@ const tabs={
   codex:document.getElementById('tab-codex'),
   extra:document.getElementById('tab-extra')
 };
-function setView(name){
-  // Marque la vue active sur <body> pour piloter l'affichage conditionnel (ex: panneau droit)
-  try { document.body.setAttribute('data-view', name); } catch(e){}
-  Object.keys(views).forEach(v=>{const active=(v===name); if(v==='orbit'){views[v].style.display=active?'flex':'none'} else {views[v].classList.toggle('active',active); views[v].setAttribute('aria-hidden', String(!active));} tabs[v].setAttribute('aria-selected', String(active));});
+function setView(name){Object.keys(views).forEach(v=>{const active=(v===name); if(v==='orbit'){views[v].style.display=active?'flex':'none'} else {views[v].classList.toggle('active',active); views[v].setAttribute('aria-hidden', String(!active));} tabs[v].setAttribute('aria-selected', String(active));});
   // Texte d'aide selon la vue
   if(name==='codex'){ setTopTitle('Codex'); setTopTip("Parcours, filtre et annote chaque entrée."); (function(){var sw=document.getElementById('searchWrap'); if(sw) sw.style.visibility='hidden';})(); }
   else if(name==='extra') {
@@ -764,25 +639,10 @@ function setView(name){
     (function(){var sw=document.getElementById('searchWrap'); if(sw) sw.style.visibility='hidden';})();
   }
   else { setTopTip(); (function(){var sw=document.getElementById('searchWrap'); if(sw) sw.style.visibility='visible';})(); }
-  // Ne pas modifier l'URL lors d'un changement d'onglet
-  // (hash désactivé pour préserver les transitions)
-  // location.hash = '#'+name;
+  location.hash = '#'+name;
 }
-function setViewWithFade(name){
-  try{ setView(name); }catch(e){ return; }
-  var el = views && views[name];
-  if(!el) return;
-  try{
-    var prev = el.style.opacity;
-    el.style.opacity = '0';
-    requestAnimationFrame(function(){ el.style.opacity = '1'; setTimeout(function(){ el.style.opacity = prev || ''; }, 360); });
-  }catch(e){}
-}
-['orbit','codex','extra'].forEach(function(v){
-  if(tabs[v]) tabs[v].addEventListener('click',function(e){ if(e && e.preventDefault) e.preventDefault(); setViewWithFade(v); });
-});
-// Désactivé: éviter que le hash casse/relance la transition
-// window.addEventListener('hashchange',function(){ var h=(location.hash||'').replace('#',''); setViewWithFade(h==='codex'?'codex': h==='extra'?'extra':'orbit'); });
+['orbit','codex','extra'].forEach(v=>{ if(tabs[v]) tabs[v].addEventListener('click',()=>setView(v)); });
+window.addEventListener('hashchange',()=>{const h=(location.hash||'').replace('#',''); setView(h==='codex'?'codex':'orbit')});
 
 /* ====== ORBITE (logique d'origine, conservée) ====== */
 var listEl=document.getElementById('imgList');var searchForm=document.getElementById('searchForm');var searchInput=document.getElementById('imgSearch');
@@ -908,12 +768,7 @@ document.getElementById('codexModalSave').addEventListener('click', function(){ 
 buildTagChips(); if(codexSearch){codexSearch.addEventListener('input', renderCodex);} if(codexSort){codexSort.addEventListener('change', renderCodex);} renderCodex();
 
 /* ===== Initialisation ===== */
-window.addEventListener('load', function(){
-  var hash=(location.hash||'').slice(1);
-  var initial= (hash==='codex')?'codex': (hash==='extra'?'extra':'orbit');
-  // À l’arrivée sur un onglet, on fait apparaître progressivement ses éléments
-  setViewWithFade(initial);
-});
+window.addEventListener('load', function(){ const initial=(location.hash||'').slice(1)==='codex'?'codex':'orbit'; setView(initial); });
 /* ===== UX: fermer la modale via clic arrière-plan + Échap ===== */
 document.getElementById('codexModal').addEventListener('click', (e)=>{
   if (e.target && e.target.id === 'codexModal') closeCodexModal();
@@ -932,79 +787,93 @@ if (typeof tabs!=='undefined' && tabs && tabs.codex) {
 }
 </script>
   <!-- Lien vers la nouvelle page Atelier -->
-  
+  <button id="openExtra" class="fab-extra" aria-expanded="false" title="Ouvrir l'atelier">Atelier</button>
 
-  
+  <!-- Nouvelle fenêtre flottante indépendante: Atelier Texte -->
+  <div id="extraModal" class="window" aria-hidden="true" role="dialog" aria-labelledby="extraTitle">
+    <div class="windowCard">
+      <div class="windowHead">
+        <h3 id="extraTitle" style="margin:0">Atelier Texte</h3>
+        <button id="extraClose" class="iconBtn" title="Fermer">×</button>
+      </div>
+      <div class="windowBody">
+        <div style="grid-column:1/-1">
+          <p class="tabHint">Un petit outil texte, sans rapport avec les autres vues.</p>
+        </div>
+        <textarea id="extraInput" placeholder="Tape ton texte ici..."></textarea>
+        <div>
+          <div class="btnRow">
+            <button class="btn" id="extraUpper">MAJUSCULES</button>
+            <button class="btn" id="extraLower">minuscules</button>
+            <button class="btn" id="extraReverse">inverser</button>
+            <button class="btn" id="extraClear">Effacer</button>
+          </div>
+          <textarea id="extraOutput" placeholder="Résultat..." readonly></textarea>
+        </div>
+      </div>
+      <div class="windowResize" aria-hidden="true"></div>
+    </div>
+  </div>
 
-  
   <script>
-    // Transition d'onglet progressive (stagger sortant/entrant)
+    // Fenêtre Atelier: ouverture, déplacement, redimensionnement + outils
     (function(){
-      function stagger(list, step){ for(var i=0;i<list.length;i++){ try{ list[i].style.transitionDelay=((i*step)/1000)+'s'; }catch(e){} } }
-      window.setViewWithFade = function(name){
-        var current=(document.body&&document.body.getAttribute('data-view'))||'orbit';
-        var fromEl=(window.views&&window.views[current])||null;
-        var toEl=(window.views&&window.views[name])||null;
-        if(!toEl){ try{ setView(name); }catch(e){}; return; }
-        // Pré-affiche la vue cible pour un vrai crossfade
-        if(toEl===window.views['orbit']){ toEl.style.display='flex'; }
-        else { toEl.classList.add('active'); toEl.setAttribute('aria-hidden','false'); }
-        toEl.classList.add('is-entering');
-        requestAnimationFrame(function(){ toEl.classList.remove('is-entering'); });
-
-        var leaveItems=[];
-        if(fromEl){
-          try{ leaveItems=[].slice.call(fromEl.querySelectorAll('.gallery .card, .codexCard, .toolCard, .grid > *, .actions > *')); }catch(e){}
-          fromEl.classList.add('is-leaving'); stagger(leaveItems,120);
+      var openBtn = document.getElementById('openExtra');
+      var win = document.getElementById('extraModal');
+      var closeBtn = document.getElementById('extraClose');
+      var card = document.querySelector('#extraModal .windowCard');
+      var head = document.querySelector('#extraModal .windowHead');
+      var grip = document.querySelector('#extraModal .windowResize');
+      if(openBtn && win && closeBtn && card){
+        function show(){ win.setAttribute('aria-hidden','false'); openBtn.setAttribute('aria-expanded','true'); }
+        function hide(){ win.setAttribute('aria-hidden','true'); openBtn.setAttribute('aria-expanded','false'); }
+        openBtn.addEventListener('click', show);
+        closeBtn.addEventListener('click', hide);
+      }
+      var dragging=false, resizing=false, startX=0, startY=0, startL=0, startT=0, startW=0, startH=0;
+      function px(n){ return n+"px"; }
+      function move(e){
+        if(!dragging && !resizing) return;
+        var x=e.clientX, y=e.clientY, vw=window.innerWidth, vh=window.innerHeight;
+        if(dragging){
+          var nl = startL + (x-startX);
+          var nt = startT + (y-startY);
+          var rect = card.getBoundingClientRect();
+          nl = Math.max(0, Math.min(nl, vw - rect.width));
+          nt = Math.max(0, Math.min(nt, vh - rect.height));
+          card.style.left = px(nl);
+          card.style.top = px(nt);
         }
-        setTimeout(function(){
-          try{ SUPPRESS_HASH=true; setView(name); }catch(e){} finally { SUPPRESS_HASH=false; }
-          // hash désactivé pendant l'animation: ne modifie pas l'URL
-          // Nettoyage
-          toEl.style.display='';
-          if(fromEl){ fromEl.classList.remove('is-leaving'); leaveItems.forEach(function(el){ try{ el.style.transitionDelay=''; }catch(e){} }); }
-        },2000);
-      };
-    })();
-  </script>
-  <script>
-    // Transition d'onglet sans overlay: on anime seulement les vues/éléments
-    (function(){
-      function forceReflow(el){ try{ void el.offsetWidth; }catch(e){} }
-      function stagger(list, stepMs){ for(var i=0;i<list.length;i++){ try{ list[i].style.transitionDelay=(i*stepMs)+'ms'; }catch(e){} } }
-      window.setViewWithFade = function(name){
-        var current=(document.body&&document.body.getAttribute('data-view'))||'orbit';
-        var fromEl=(window.views&&window.views[current])||null;
-        var toEl=(window.views&&window.views[name])||null;
-        if(!toEl || fromEl===toEl){ try{ setView(name); }catch(e){} return; }
-
-        // Pré-affiche la vue cible pour permettre l'animation d'entrée
-        if(name==='orbit'){ toEl.style.display='flex'; }
-        else { toEl.classList.add('active'); toEl.setAttribute('aria-hidden','false'); }
-        toEl.classList.add('is-entering');
-        // Stagger entrée sur quelques éléments clés
-        try{ stagger([].slice.call(toEl.querySelectorAll('.gallery .card, .codexCard, .toolCard, .grid > *')), 70); }catch(e){}
-        forceReflow(toEl);
-        requestAnimationFrame(function(){ toEl.classList.remove('is-entering'); });
-
-        // Anime la sortie de l’ancienne vue
-        if(fromEl){
-          try{ stagger([].slice.call(fromEl.querySelectorAll('.gallery .card, .codexCard, .toolCard, .grid > *')), 70); }catch(e){}
-          fromEl.classList.add('is-leaving');
+        if(resizing){
+          var nw = Math.max(320, startW + (x-startX));
+          var nh = Math.max(180, startH + (y-startY));
+          nw = Math.min(nw, vw - card.offsetLeft - 8);
+          nh = Math.min(nh, vh - card.offsetTop - 8);
+          card.style.width = px(nw);
+          card.style.height = px(nh);
         }
-
-        // Finalise après la durée d’anim (~700ms)
-        setTimeout(function(){
-          try{ setView(name); }catch(e){}
-          if(fromEl){
-            fromEl.classList.remove('is-leaving');
-            try{ [].slice.call(fromEl.querySelectorAll('.gallery .card, .codexCard, .toolCard, .grid > *')).forEach(function(el){ el.style.transitionDelay=''; }); }catch(e){}
-          }
-          toEl.style.display='';
-          try{ [].slice.call(toEl.querySelectorAll('.gallery .card, .codexCard, .toolCard, .grid > *')).forEach(function(el){ el.style.transitionDelay=''; }); }catch(e){}
-        }, 700);
-      };
+        e.preventDefault();
+      }
+      function end(){ dragging=false; resizing=false; document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end); }
+      if(head){
+        head.addEventListener('mousedown', function(e){ dragging=true; var r=card.getBoundingClientRect(); startX=e.clientX; startY=e.clientY; startL=r.left; startT=r.top; document.addEventListener('mousemove', move); document.addEventListener('mouseup', end); });
+      }
+      if(grip){
+        grip.addEventListener('mousedown', function(e){ resizing=true; var r=card.getBoundingClientRect(); startX=e.clientX; startY=e.clientY; startW=r.width; startH=r.height; document.addEventListener('mousemove', move); document.addEventListener('mouseup', end); e.preventDefault(); });
+      }
+      var input = document.getElementById('extraInput');
+      var out = document.getElementById('extraOutput');
+      function sync(v){ if(out) out.value = v; }
+      var up = document.getElementById('extraUpper');
+      var lo = document.getElementById('extraLower');
+      var rev = document.getElementById('extraReverse');
+      var clr = document.getElementById('extraClear');
+      if(up) up.addEventListener('click', function(){ sync((input.value||'').toUpperCase()); });
+      if(lo) lo.addEventListener('click', function(){ sync((input.value||'').toLowerCase()); });
+      if(rev) rev.addEventListener('click', function(){ sync((input.value||'').split('').reverse().join('')); });
+      if(clr) clr.addEventListener('click', function(){ if(input) input.value=''; if(out) out.value=''; if(input) input.focus(); });
     })();
   </script>
 </body>
 </html>
+
